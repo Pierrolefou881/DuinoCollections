@@ -31,7 +31,31 @@ lib_deps =
 
 ## Structure
 
+**DuinoCollections** is a small framework of generic collections. Due to
+hardware limitations on most supported MCUs, these collections avoid
+unbounded dynamic memory allocation and therefore limit heap fragmentation.
+For that reason, all containers are array-backed and have a fixed capacity.
+
+Memory allocation occurs once at construction time and is released on
+destruction. This compromise was made to avoid safety issues inherent to
+external buffers, especially due to their unknown lifetime.
+
+Polymorphic usage is supported for collections inheriting from the base
+type **LinearCollection**. However, all critical methods remain non-virtual
+to minimize RAM overhead. For these methods, inheritance is achieved through
+the Curiously Recurring Template Pattern (CRTP).
+
 ## Examples
+
+### Importing collections
+```C++
+// example.ino
+
+#include <DuinoCollections.hpp>      // Import the entire framework (not recommended).
+
+// Or import each collection separately according to your needs.
+#include <FixedVector.hpp>
+```
 
 ## License
 

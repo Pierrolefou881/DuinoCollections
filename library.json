@@ -1,0 +1,29 @@
+{
+  "name": "DuinoCollections",
+  "version": "0.1.0",
+  "description": "Fixed-capacity, array-backed collections for Arduino (no dynamic allocation, no exceptions).",
+  "keywords": [
+    "arduino",
+    "embedded",
+    "collections",
+    "vector",
+    "ringbuffer",
+    "fixed"
+  ],
+  "authors": [
+    {
+      "name": "Pierre DEBAS",
+      "email": "dpierre394@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pierrolefou881/DuinoCollections"
+  },
+  "frameworks": ["arduino"],
+  "platforms": "*",
+  "headers": [
+    "DuinoCollections.hpp"
+  ]
+}
