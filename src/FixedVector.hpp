@@ -20,12 +20,26 @@
  */
 #pragma once
 #include "internal/LinearCollection.hpp"
+#include "internal/policy/IndexingPolicy.hpp"
+#include "internal/policy/DuplicationPolicy.hpp"
 
 namespace DuinoCollections
 {
     template<typename T>
-    class FixedVector : public LinearCollection<T, FixedVector<T>>
+    class FixedVector : public Internal::LinearCollection<
+        T, Internal::Policy::SequentialIndexingPolicy<T>, 
+        Internal::Policy::AllowDuplicatePolicy<T>
+    > 
     {
+    public:
+        using Base = Internal::LinearCollection<
+            T, Internal::Policy::SequentialIndexingPolicy<T>,
+            Internal::Policy::AllowDuplicatePolicy<T>
+        >;
 
+        FixedVector(size_t max_capacity = 5) : Base{ max_capacity }
+        {
+            // Empty body.
+        }
     };
 }

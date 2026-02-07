@@ -42,20 +42,47 @@ namespace DuinoCollections
          * 
          * LinarCollection should be considered as an abstract type and not instanced
          * directly.
-         * 
-         * To avoid virtual tables and ram consumption due to virtual tables,
-         * LinearCollection uses the Curiously Recurring Template Pattern
-         * (CRTP) as a means for inheritance.
+         *
+         * LinearCollection defines the common public interface and enforces invariants, 
+         * while derived collection types provide concrete implementations, 
+         * allowing compile-time polymorphism on performance-critical paths, 
+         * thus avoiding RAM-expensive virtual tables.
          * @param T type of data stored in this LinearCollection concrete
          *        implementation. Can be any type as long as it has a
          *        default initializer.
-         * @param Derived name of the derived type, i.e. the concrete
-         *        implementation of this LinearCollection.
+         * @param IndexingPolicy defines where insertions should occur.
+         * @param DuplicationPolicy defines whether duplicates are allowed or not.
          */
-        template<typename T, typename Derived>
+        template<typename T, typename IndexingPolicy, typename DuplicationPolicy>
         class LinearCollection
         {    
         public:
+            ~LinearCollection()
+            {
+                delete[] _data;
+            }
+
+            /**
+             * Adds the provided item to this LinearCollection. Gives feedback
+             * upon success or failure.
+             * Success depends on size and capacity or duplication policies.
+             * @param item to add to this LinearCollection.
+             * @return true if push was successful, false otherwise.
+             */
+            bool push(const T& item)
+            {
+                if (_data == nullptr || is_full() 
+                        || !_duplication_policy.allows(_data, _size, item))
+                {
+                    return false;
+                }
+
+                auto index = _index_policy.get_insertion_index(_data, _size, item);
+                _index_policy.insert(_data, _size, index, item);
+                _size++;
+                return true;
+            }
+
             /**
              * @return true if _data member is usable, false otherwise.
              */
@@ -73,6 +100,33 @@ namespace DuinoCollections
             {
                 return _capacity;
             }
+
+            /**
+             * @return the current number of elements accessible in this
+             *         LinearCollection.
+             */
+            size_t size(void) const
+            {
+                return _size;
+            }
+
+            /**
+             * @return true if this LinearCollection has reached its max capacity,
+             *         false otherwise.
+             */
+            bool is_full(void) const
+            {
+                return _size >= _capacity;
+            }
+
+            /**
+             * CAUTION: Undefined behavior if out of bounds. Always ensure
+             * index <  size().
+             */
+            T& operator [](size_t index)
+            {
+                return _data[index];
+            }
             
         protected:
             /**
@@ -81,20 +135,22 @@ namespace DuinoCollections
              * @param capacity must be strictly positive. Defaulted to 5.
              */
             explicit LinearCollection(size_t capacity = 5)
-                : _capacity{ capacity },
-                _data{ capacity > 0 ? new (std::nothrow) T[capacity] : nullptr }
+                : _data{ capacity > 0 ? new T[capacity] : nullptr }
+                , _capacity{ capacity }
+            
             {
-                // Empty body.
-            }
-    
-            virtual ~LinearCollection()
-            {
-                delete[] _data;
+                if (_data == nullptr)
+                {
+                    _capacity = 0;
+                }
             }
 
         private:
             T* _data{ };
             size_t _capacity{ };
+            size_t _size{ };
+            IndexingPolicy _index_policy{ };
+            DuplicationPolicy _duplication_policy{ };
         };
 
     }
