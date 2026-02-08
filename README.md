@@ -6,6 +6,21 @@ Supports Arduino / PlatformIO.
 
 License: MIT.
 
+## Quick example
+```C++
+
+```
+
+## Why DuinoCollections?
+
+Feel free to take a look at the [cheat-sheet](CHEATSHEET.md).
+
+## When should I use DuinoCollections?
+
+## Design goals
+
+## Non-goals
+
 ## Installation
 
 ### Arduino IDE
@@ -40,12 +55,11 @@ Memory allocation occurs once at construction time and is released on
 destruction. This compromise was made to avoid safety issues inherent to
 external buffers, especially due to their unknown lifetime.
 
-Polymorphic usage is supported for collections inheriting from the base
-type **LinearCollection**. However, all critical methods remain non-virtual
-to minimize RAM overhead. For these methods, inheritance is achieved through
-the Curiously Recurring Template Pattern (CRTP).
+Since the collections use a CRTP-like inheritance pattern, runtime polymorphic 
+usage is not supported. Collections should therefore always be referred to 
+by their concrete type.
 
-## Examples
+## Basic usage
 
 ### Importing collections
 ```C++
@@ -57,26 +71,8 @@ the Curiously Recurring Template Pattern (CRTP).
 #include <FixedVector.hpp>
 ```
 
+## Safety considerations and limitations
+
 ## License
 
-MIT License
-
-Copyright (c) 2026 Pierre DEBAS
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+MIT - see [LICENSE](LICENSE)
