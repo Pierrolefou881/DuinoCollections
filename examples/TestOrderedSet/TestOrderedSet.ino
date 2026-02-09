@@ -20,6 +20,9 @@
  */
 #include <FixedOrderedSet.hpp>
 
+const size_t MAX_CAPACITY{ 26 };
+DuinoCollections::FixedOrderedSet<char> set{ MAX_CAPACITY };
+
 void setup() {
 
 }

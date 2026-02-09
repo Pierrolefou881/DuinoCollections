@@ -20,8 +20,9 @@
  */
 #pragma once
 #include "internal/LinearCollection.hpp"
-#include "internal/policy/IndexingPolicy.hpp"
-#include "internal/policy/DuplicationPolicy.hpp"
+#include "SortingOrder.hpp"
+#include "internal/policy/indexing/OrderedIndexingPolicy.hpp"
+#include "internal/policy/duplication/ForbidDuplicationPolicy.hpp"
 
 namespace DuinoCollections
 {
@@ -32,11 +33,22 @@ namespace DuinoCollections
      * @param T can be any type as long as it implements a
      *        default initializer.
      */
-    template<typename T>
+    template<typename T, typename SortingOrder = Ascending<T>>
     class FixedOrderedSet : public Internal::LinearCollection<
-        T, Internal::Policy::OrderedIndexingPolicy<T>, 
-        Internal::Policy::AllowDuplicatePolicy<T>
+        T, Internal::Policy::Indexing::OrderedIndexingPolicy<T, SortingOrder>, 
+        Internal::Policy::Duplication::ForbidDuplicationPolicy<T>
     > 
     {
+    public:
+        using Base = Internal::LinearCollection<
+            T, Internal::Policy::Indexing::OrderedIndexingPolicy<T, SortingOrder>,
+            Internal::Policy::Duplication::ForbidDuplicationPolicy<T>
+        >;
+
+        FixedOrderedSet(size_t max_capacity) : Base{ max_capacity }
+        {
+            // Empty body.
+        }
+
     };
 }

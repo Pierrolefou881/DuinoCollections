@@ -20,8 +20,8 @@
  */
 #pragma once
 #include "internal/LinearCollection.hpp"
-#include "internal/policy/IndexingPolicy.hpp"
-#include "internal/policy/DuplicationPolicy.hpp"
+#include "internal/policy/indexing/SequentialIndexingPolicy.hpp"
+#include "internal/policy/duplication/AllowDuplicationPolicy.hpp"
 
 namespace DuinoCollections
 {
@@ -34,14 +34,14 @@ namespace DuinoCollections
      */
     template<typename T>
     class FixedVector : public Internal::LinearCollection<
-        T, Internal::Policy::SequentialIndexingPolicy<T>, 
-        Internal::Policy::AllowDuplicatePolicy<T>
+        T, Internal::Policy::Indexing::SequentialIndexingPolicy<T>, 
+        Internal::Policy::Duplication::AllowDuplicationPolicy<T>
     > 
     {
     public:
         using Base = Internal::LinearCollection<
-            T, Internal::Policy::SequentialIndexingPolicy<T>,
-            Internal::Policy::AllowDuplicatePolicy<T>
+            T, Internal::Policy::Indexing::SequentialIndexingPolicy<T>,
+            Internal::Policy::Duplication::AllowDuplicationPolicy<T>
         >;
 
         /**

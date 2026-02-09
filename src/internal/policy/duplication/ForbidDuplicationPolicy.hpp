@@ -1,8 +1,8 @@
 /*
  ******************************************************************************
- *  DuplicationPolicy.hpp
+ *  ForbidDuplicationPolicy.hpp
  *
- *  Duplication policies to be used with LinearCollection.
+ *  Policy for collections that always forbids item duplicates.
  *
  *  Author: Pierre DEBAS
  *  Copyright (c) 2026
@@ -38,19 +38,30 @@ namespace DuinoCollections
     {
         namespace Policy
         {
-            /**
-             * 
-             */
-            template<typename T>
-            struct AllowDuplicatePolicy
+            namespace Duplication
             {
-                static const bool ALLOWS_DUPLICATES{ true };
-                
-                bool allows(const T* /*data*/, size_t /*size*/, const T& /*item*/) const
+                /**
+                 * This policy forbid duplicates at all times. It is mainly
+                 * used in FixedSet, FixedOrderedSet and FixedMap.
+                 * @param T type of element contained in the owning collection.
+                 */
+                template<typename T>
+                struct ForbidDuplicationPolicy
                 {
-                    return true;
-                }
-            };
+                    static const bool ALLOWS_DUPLICATES{ false };
+                    
+                    /** 
+                     * @param data unused.
+                     * @param size unused.
+                     * @param item unused.
+                     * @return always true. 
+                     */
+                    bool allows(const T* /*data*/, size_t /*size*/, const T& /*item*/) const
+                    {
+                        return ALLOWS_DUPLICATES;
+                    }
+                };
+            }
         }
     }
 }
