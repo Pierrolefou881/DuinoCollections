@@ -50,5 +50,9 @@ namespace DuinoCollections
             // Empty body.
         }
 
+        bool insert(const T& item)
+        {
+            return Base::push(item);
+        }
     };
 }

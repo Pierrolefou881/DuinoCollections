@@ -165,6 +165,46 @@ namespace DuinoCollections
         }
 
         /**
+         * CAUTION: Undefined behavior if out of bounds. Always ensure collection
+         *          is not empty before calling.
+         * @return the first element of this FixedVector.
+         */
+        T& front(void)
+        {
+            return Base::at(0);
+        }
+
+        /**
+         * CAUTION: Undefined behavior if out of bounds. Always ensure collection
+         *          is not empty before calling.
+         * @return the first element of this FixedVector.
+         */
+        const T& front(void) const
+        {
+            return Base::at(0);
+        }
+
+        /**
+         * CAUTION: Undefined behavior if out of bounds. Always ensure collection
+         *          is not empty before calling.
+         * @return the last element of this FixedVector.
+         */
+        T& back(void)
+        {
+            return Base::at(size() - 1);
+        }
+
+        /**
+         * CAUTION: Undefined behavior if out of bounds. Always ensure collection
+         *          is not empty before calling.
+         * @return the last element of this FixedVector.
+         */
+        const T& back(void) const
+        {
+            return Base::at(size() - 1);
+        }
+
+        /**
          * Removes all instances of the provided item from this FixedVector.
          * Successful if at least one instance is removed.
          * @param item to purge out of this FixedVector.

@@ -65,9 +65,10 @@ namespace DuinoCollections
 
             LinearCollection(LinearCollection<T, IndexingPolicy, DuplicationPolicy>&& other) noexcept
                 : _data{ other._data }, _capacity{ other._capacity }, _size{ other._size }
-                , _index_policy{ other._index_policy }, _duplication_policy{ other._duplication_policy }
             {
-                // Empty body.
+                other._data = nullptr;
+                other._capacity = 0;
+                other._size = 0;
             }
 
             /**
@@ -98,10 +99,65 @@ namespace DuinoCollections
             }
 
             /**
+             * Access the element at the given index.
+             * CAUTION: Undefined behavior if out of bounds. Always ensure
+             * index <  size().
+             * @param index of the item to access.
+             * @return the reference to the item at index.
+             */
+            T& at(size_t index)
+            {
+                return _data[index];
+            }
+
+            /**
+             * Access the element at the given index.
+             * CAUTION: Undefined behavior if out of bounds. Always ensure
+             * index <  size().
+             * @param index of the item to access.
+             * @return the reference to the item at index.
+             */
+            const T& at(size_t index) const
+            {
+                return _data[index];
+            }
+
+            /**
+             * Determines the index of the first occurrence
+             * of the provided item, if any.
+             * @param item to find in this LinearCollection.
+             * @return the index of item, or _size if not found.
+             */
+            size_t find(const T& item) const
+            {
+                return _INDEXING_POLICY.find_index(_data, _size, item);
+            }
+
+            /**
+             * Determines whether an item is present in this LinearCollection.
+             * @param item to check the presence of.
+             * @return true if item present at least once, false otherwise.
+             */
+            [[nodiscard]]
+            bool contains(const T& item) const
+            {
+                return find(item) != _size;
+            }
+
+            /**
              * CAUTION: Undefined behavior if out of bounds. Always ensure
              * index <  size().
              */
             T& operator [](size_t index)
+            {
+                return _data[index];
+            }
+
+            /**
+             * CAUTION: Undefined behavior if out of bounds. Always ensure
+             * index <  size().
+             */
+            const T& operator [](size_t index) const
             {
                 return _data[index];
             }
@@ -115,9 +171,43 @@ namespace DuinoCollections
                 _data = other._data;
                 _capacity = other._capacity;
                 _size = other._size;
-                _index_policy = other._index_policy;
-                _duplication_policy = other._duplication_policy;
+
+                other._data = nullptr;
+                other._capacity = 0;
+                other._size = 0;
             }
+
+            // Iterators (range-for support)
+            T* begin(void)
+            {
+                return _data;
+            }
+
+            T* end(void)
+            {
+                return _data + _size;
+            }
+
+            const T* begin(void) const
+            {
+                return _data;
+            }
+
+            const T* end(void) const
+            {
+                return _data + _size;
+            }
+
+            const T* cbegin(void) const
+            {
+                return _data;
+            }
+
+            const T* cend(void) const
+            {
+                return _data + _size;
+            }
+
 
         protected:
             /**
@@ -129,9 +219,6 @@ namespace DuinoCollections
                 : _data{ capacity > 0 ? new T[capacity] : nullptr }
                 , _capacity{ capacity }
                 , _size{ 0 }
-                , _index_policy{ }
-                , _duplication_policy{ }
-            
             {
                 if (_data == nullptr)
                 {
@@ -148,7 +235,7 @@ namespace DuinoCollections
              */
             bool push(const T& item)
             {
-                if (!is_valid() || is_full)
+                if (!is_valid() || is_full())
                 {
                     return false;
                 }
@@ -157,9 +244,9 @@ namespace DuinoCollections
                 bool can_add{ };
 
                 // Ordered and does not allow duplicate, avoid double search.
-                if (IndexingPolicy::IS_ORDERED && DuplicationPolicy::ALLOWS_DUPLICATES)
+                if (IndexingPolicy::IS_ORDERED && !DuplicationPolicy::ALLOWS_DUPLICATES)
                 {
-                    auto res = _index_policy.find_insert_position(_data, _size, item);
+                    auto res = _INDEXING_POLICY.find_insert_position(_data, _size, item);
                     index = res.index;
                     can_add = !res.found;
                 }
@@ -167,8 +254,8 @@ namespace DuinoCollections
                 // Fallback for generic case.
                 else
                 {
-                    index = _index_policy.get_push_index(_data, _size, item);
-                    can_add = _duplication_policy.allows(_data, size, item);
+                    index = _INDEXING_POLICY.get_push_index(_data, _size, item);
+                    can_add = _DUPLICATION_POLICY.allows(_data, _size, item);
                 }
 
                 if (!can_add)
@@ -176,7 +263,7 @@ namespace DuinoCollections
                     return false;
                 }
 
-                _index_policy.insert(_data, _size, index, item);
+                _INDEXING_POLICY.insert(_data, _size, index, item);
                 _size++;
                 return true;
             }
@@ -194,9 +281,9 @@ namespace DuinoCollections
                     return false;
                 }
 
-                auto index = _index_policy.get_pop_index(_data, _size);
+                auto index = _INDEXING_POLICY.get_pop_index(_data, _size);
                 out_value = _data[index];
-                _index_policy.remove(_data, _size, index);
+                _INDEXING_POLICY.remove(_data, _size, index);
                 _size--;
                 return true;
             }
@@ -263,12 +350,12 @@ namespace DuinoCollections
             bool insert_at(const T& item, size_t index)
             {
                 if (!is_valid() || is_full() 
-                        || !_duplication_policy.allows(_data, _size, item) || index > _size)
+                        || !_DUPLICATION_POLICY.allows(_data, _size, item) || index > _size)
                 {
                     return false;
                 }
 
-                _index_policy.insert(_data, _size, index, item);
+                _INDEXING_POLICY.insert(_data, _size, index, item);
                 _size++;
                 return true;
             }
@@ -283,13 +370,13 @@ namespace DuinoCollections
              */
             bool remove_at(size_t index, T& out_item)
             {
-                if (!is_valid() || is_empty() || index > _size)
+                if (!is_valid() || is_empty() || index >= _size)
                 {
                     return false;
                 }
                 
                 out_item = _data[index];
-                _index_policy.remove(_data, _size, index);
+                _INDEXING_POLICY.remove(_data, _size, index);
                 _size--;
                 return true;
             }
@@ -306,13 +393,13 @@ namespace DuinoCollections
                 {
                     return false;
                 }
-                auto index = _index_policy.find_index(_data, _size, item);
+                auto index = _INDEXING_POLICY.find_index(_data, _size, item);
                 if (index == _size)
                 {
                     return false;
                 }
 
-                _index_policy.remove(_data, _size, index);
+                _INDEXING_POLICY.remove(_data, _size, index);
                 _size--;
                 return true;
             }
@@ -330,7 +417,7 @@ namespace DuinoCollections
                     return false;
                 }
 
-                auto count = _index_policy.remove_all(_data, _size, item);
+                auto count = _INDEXING_POLICY.remove_all(_data, _size, item);
                 _size -= count;
                 return count > 0;
             }
@@ -339,6 +426,7 @@ namespace DuinoCollections
              * @return the current number of elements accessible in this
              *         LinearCollection.
              */
+            [[nodiscard]]
             size_t size(void) const
             {
                 return _size;
@@ -348,6 +436,7 @@ namespace DuinoCollections
              * @return true if this LinearCollection has reached its max capacity,
              *         false otherwise.
              */
+            [[nodiscard]]
             bool is_full(void) const
             {
                 return _size >= _capacity;
@@ -356,23 +445,19 @@ namespace DuinoCollections
             /**
              * @return true if this LinearCollection contains no element, false otherwise.
              */
+            [[nodiscard]]
             bool is_empty(void) const
             {
                 return _size == 0;
             }
 
         private:
+            static constexpr IndexingPolicy _INDEXING_POLICY{ };
+            static constexpr DuplicationPolicy _DUPLICATION_POLICY{ };
+            
             T* _data{ };
             size_t _capacity{ };
             size_t _size{ };
-            IndexingPolicy _index_policy{ };
-            DuplicationPolicy _duplication_policy{ };
-
-            bool can_add_item(const T& item) const
-            {
-                return is_valid() && !is_full() 
-                    && _duplication_policy.allows(_data, _size, item);
-            }
         };
     }
 }

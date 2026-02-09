@@ -24,6 +24,9 @@
 // #define _PUSH_POP
 #define _INSERT_REMOVE_CLEAR
 
+// Test iteration
+#define _RANGE_FOR
+
 const size_t MAX_CAPACITY{ 26 };
 DuinoCollections::FixedVector<char> vec{ MAX_CAPACITY };
 size_t index{ };
@@ -97,11 +100,19 @@ void loop() {
 
 void print_vector()
 {
+#ifdef _RANGE_FOR
+  for (const auto& item : vec)
+  {
+    Serial.print(item);
+    Serial.print(", ");
+  }
+#else
   for (size_t i = 0; i < vec.size(); i++)
   {
     Serial.print(vec[i]);
     Serial.print(", ");
   }
+#endif
   Serial.print('\t');
   Serial.println(vec.size());
 }
