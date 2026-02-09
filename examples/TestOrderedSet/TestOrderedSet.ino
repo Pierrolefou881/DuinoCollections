@@ -1,8 +1,8 @@
 /*
  ******************************************************************************
- *  DuinoCollections.hpp
+ *  TestOrderedSet.ino
  *
- *  Simple and lightweight collections for the Arduino environment.
+ *  Testbed and examples for the FixedOrderedSet collection.
  *
  *  Author: Pierre DEBAS
  *  Copyright (c) 2026
@@ -13,11 +13,17 @@
  *  SPDX-License-Identifier: MIT
  *
  *  Description:
- *    Fixed capacity, array-backed collections to prevent heap fragmentation
- *    and memory leaks.
+ *    This sketch provides tests and use case examples for the FixedOrderedSet
+ *    collection, part of the DuinoCollections library.
  *
  ******************************************************************************
  */
-#pragma once
-#include "FixedVector.hpp"
-#include "FixedOrderedSet.hpp"
+#include <FixedOrderedSet.hpp>
+
+void setup() {
+
+}
+
+void loop() {
+
+}

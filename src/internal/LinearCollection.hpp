@@ -148,12 +148,34 @@ namespace DuinoCollections
              */
             bool push(const T& item)
             {
-                if (!can_add_item(item))
+                if (!is_valid() || is_full)
                 {
                     return false;
                 }
 
-                auto index = _index_policy.get_insertion_index(_data, _size, item);
+                size_t index{ };
+                bool can_add{ };
+
+                // Ordered and does not allow duplicate, avoid double search.
+                if (IndexingPolicy::IS_ORDERED && DuplicationPolicy::ALLOWS_DUPLICATES)
+                {
+                    auto res = _index_policy.find_insert_position(_data, _size, item);
+                    index = res.index;
+                    can_add = !res.found;
+                }
+
+                // Fallback for generic case.
+                else
+                {
+                    index = _index_policy.get_push_index(_data, _size, item);
+                    can_add = _duplication_policy.allows(_data, size, item);
+                }
+
+                if (!can_add)
+                {
+                    return false;
+                }
+
                 _index_policy.insert(_data, _size, index, item);
                 _size++;
                 return true;
@@ -172,7 +194,7 @@ namespace DuinoCollections
                     return false;
                 }
 
-                auto index = _index_policy.get_removal_index(_data, _size);
+                auto index = _index_policy.get_pop_index(_data, _size);
                 out_value = _data[index];
                 _index_policy.remove(_data, _size, index);
                 _size--;
@@ -240,7 +262,8 @@ namespace DuinoCollections
              */
             bool insert_at(const T& item, size_t index)
             {
-                if (!can_add_item(item) || index > _size)
+                if (!is_valid() || is_full() 
+                        || !_duplication_policy.allows(_data, _size, item) || index > _size)
                 {
                     return false;
                 }
@@ -307,23 +330,9 @@ namespace DuinoCollections
                     return false;
                 }
 
-                size_t first;
-                size_t last;
-                auto count = _index_policy.find_range(_data, _size, item, first, last);
-
-                if (count == 0)
-                {
-                    return false;
-                }
-
-                // Left shift remaining data.
-                for (size_t i = last; i < _size; ++i)
-                {
-                    _data[first + (i - last)] = _data[i];
-                }
-
+                auto count = _index_policy.remove_all(_data, _size, item);
                 _size -= count;
-                return true;
+                return count > 0;
             }
 
             /**

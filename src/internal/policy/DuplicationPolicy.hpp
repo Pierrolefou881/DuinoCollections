@@ -44,6 +44,8 @@ namespace DuinoCollections
             template<typename T>
             struct AllowDuplicatePolicy
             {
+                static const bool ALLOWS_DUPLICATES{ true };
+                
                 bool allows(const T* /*data*/, size_t /*size*/, const T& /*item*/) const
                 {
                     return true;

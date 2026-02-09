@@ -70,7 +70,9 @@ void loop() {
   }
   else if (vec.size() < 10)
   {
-    vec.insert_at('B', 2);
+    // Do not perform contiguous insertion -> test remove all.
+    vec.insert_at('B', index);
+    index += 2;
   }
   else if (vec.size() < 15)
   {
@@ -80,9 +82,10 @@ void loop() {
   {
     // char _{ };
     // vec.remove_at(5, _);
-    // vec.remove_first('B');
-    // vec.remove_all('a');
+    // vec.remove_first('a');
+    // vec.remove_all('B');
     vec.clear();
+    index = 0;
   }
   print_vector();
   
