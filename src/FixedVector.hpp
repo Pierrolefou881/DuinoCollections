@@ -35,13 +35,13 @@ namespace DuinoCollections
     template<typename T>
     class FixedVector : public Internal::LinearCollection<
         T, Internal::Policy::Indexing::SequentialIndexingPolicy<T>, 
-        Internal::Policy::Duplication::AllowDuplicationPolicy<T>
+        Internal::Policy::Duplication::DuplicationPolicy::ALLOW_DUPLICATES
     > 
     {
     public:
         using Base = Internal::LinearCollection<
             T, Internal::Policy::Indexing::SequentialIndexingPolicy<T>,
-            Internal::Policy::Duplication::AllowDuplicationPolicy<T>
+            Internal::Policy::Duplication::DuplicationPolicy::ALLOW_DUPLICATES
         >;
 
         /**
@@ -191,7 +191,7 @@ namespace DuinoCollections
          */
         T& back(void)
         {
-            return Base::at(size() - 1);
+            return Base::at(Base::size() - 1);
         }
 
         /**
@@ -201,7 +201,7 @@ namespace DuinoCollections
          */
         const T& back(void) const
         {
-            return Base::at(size() - 1);
+            return Base::at(Base::size() - 1);
         }
 
         /**

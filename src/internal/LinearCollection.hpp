@@ -21,6 +21,7 @@
  ******************************************************************************
  */
 #pragma once
+#include "policy/duplication/DuplicationPolicy.hpp"
 #include "utils/ScopedInterruptLock.hpp"
 #include "utils/Iterator.hpp"
 
@@ -53,7 +54,7 @@ namespace DuinoCollections
          * @param IndexingPolicy defines where insertions should occur.
          * @param DuplicationPolicy defines whether duplicates are allowed or not.
          */
-        template<typename T, typename IndexingPolicy, typename DuplicationPolicy>
+        template<typename T, typename IndexingPolicy, Policy::Duplication::DuplicationPolicy Duplication>
         class LinearCollection
         {    
         public:
@@ -62,9 +63,9 @@ namespace DuinoCollections
                 delete[] _data;
             }
 
-            LinearCollection(const LinearCollection<T, IndexingPolicy, DuplicationPolicy>& other) = delete;
+            LinearCollection(const LinearCollection<T, IndexingPolicy, Duplication>& other) = delete;
 
-            LinearCollection(LinearCollection<T, IndexingPolicy, DuplicationPolicy>&& other) noexcept
+            LinearCollection(LinearCollection<T, IndexingPolicy, Duplication>&& other) noexcept
                 : _data{ other._data }, _capacity{ other._capacity }, _size{ other._size }
             {
                 other._data = nullptr;
@@ -193,11 +194,11 @@ namespace DuinoCollections
                 return _data[index];
             }
 
-            LinearCollection<T, IndexingPolicy, DuplicationPolicy>& operator =(
-                const LinearCollection<T, IndexingPolicy, DuplicationPolicy>& other) = delete;
+            LinearCollection<T, IndexingPolicy, Duplication>& operator =(
+                const LinearCollection<T, IndexingPolicy, Duplication>& other) = delete;
 
-            LinearCollection<T, IndexingPolicy, DuplicationPolicy>& operator =(
-                LinearCollection<T, IndexingPolicy, DuplicationPolicy>&& other) noexcept
+            LinearCollection<T, IndexingPolicy, Duplication>& operator =(
+                LinearCollection<T, IndexingPolicy, Duplication>&& other) noexcept
             {
                 _data = other._data;
                 _capacity = other._capacity;
@@ -275,7 +276,8 @@ namespace DuinoCollections
                 bool can_add{ };
 
                 // Ordered and does not allow duplicate, avoid double search.
-                if (IndexingPolicy::IS_ORDERED && !DuplicationPolicy::ALLOWS_DUPLICATES)
+                if (IndexingPolicy::IS_ORDERED 
+                        && Duplication == Policy::Duplication::DuplicationPolicy::FORBID_DUPLICATES)
                 {
                     auto res = _INDEXING_POLICY.find_insert_position(_data, _size, item);
                     index = res.index;
@@ -286,7 +288,8 @@ namespace DuinoCollections
                 else
                 {
                     index = _INDEXING_POLICY.get_push_index(_data, _size, item);
-                    can_add = _DUPLICATION_POLICY.allows(_data, _size, item);
+                    can_add = Duplication == Policy::Duplication::DuplicationPolicy::ALLOW_DUPLICATES
+                           || _INDEXING_POLICY.find_index(_data, _size, item) == _size;
                 }
 
                 if (!can_add)
@@ -380,8 +383,9 @@ namespace DuinoCollections
              */
             bool insert_at(const T& item, size_t index)
             {
-                if (!is_valid() || is_full() 
-                        || !_DUPLICATION_POLICY.allows(_data, _size, item) || index > _size)
+                if (!is_valid() || is_full() || index > _size
+                        || (Duplication == Policy::Duplication::DuplicationPolicy::FORBID_DUPLICATES
+                    && _INDEXING_POLICY.find_index(_data, _size, item) != _size))
                 {
                     return false;
                 }
@@ -455,7 +459,6 @@ namespace DuinoCollections
 
         private:
             static constexpr IndexingPolicy _INDEXING_POLICY{ };
-            static constexpr DuplicationPolicy _DUPLICATION_POLICY{ };
             
             T* _data{ };
             size_t _capacity{ };

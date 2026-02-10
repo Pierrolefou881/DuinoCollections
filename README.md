@@ -240,6 +240,7 @@ Notes:
 - A small control overhead is added (pointer, size, capacity), typically **6–8 
 **bytes** on AVR.
 
+If you know the capacity, you know the exact RAM cost.
 
 ## Limitations
 **DuinoCollections** is designed for small microcontrollers and predictable
