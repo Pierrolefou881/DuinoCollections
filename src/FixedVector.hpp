@@ -214,31 +214,5 @@ namespace DuinoCollections
         {
             return Base::remove_all(item);
         }
-
-        /**
-         * @return the current number of elements accessible in this
-         *         FixedVector.
-         */
-        size_t size(void) const
-        {
-            return Base::size();
-        }
-
-        /**
-         * @return true if this FixedVector has reached its max capacity,
-         *         false otherwise.
-         */
-        bool is_full(void) const
-        {
-            return Base::is_full();
-        }
-
-        /**
-         * @return true if this FixedVector contains no element, false otherwise.
-         */
-        bool is_empty(void) const
-        {
-            return Base::is_empty();
-        }
     };
 }

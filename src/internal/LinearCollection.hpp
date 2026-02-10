@@ -22,6 +22,7 @@
  */
 #pragma once
 #include "utils/ScopedInterruptLock.hpp"
+#include "utils/Iterator.hpp"
 
 namespace DuinoCollections
 {
@@ -93,9 +94,39 @@ namespace DuinoCollections
              * @return the maximum number of elements this LinearCollection
              *         can contain.
              */
+            [[nodiscard]]
             size_t capacity(void) const
             {
                 return _capacity;
+            }
+
+            /**
+             * @return the current number of elements accessible in this
+             *         LinearCollection.
+             */
+            [[nodiscard]]
+            size_t size(void) const
+            {
+                return _size;
+            }
+
+            /**
+             * @return true if this LinearCollection has reached its max capacity,
+             *         false otherwise.
+             */
+            [[nodiscard]]
+            bool is_full(void) const
+            {
+                return _size >= _capacity;
+            }
+
+            /**
+             * @return true if this LinearCollection contains no element, false otherwise.
+             */
+            [[nodiscard]]
+            bool is_empty(void) const
+            {
+                return _size == 0;
             }
 
             /**
@@ -178,34 +209,34 @@ namespace DuinoCollections
             }
 
             // Iterators (range-for support)
-            T* begin(void)
+            Utils::Iterator<T> begin(void)
             {
-                return _data;
+                return Utils::Iterator<T> { _data };
             }
 
-            T* end(void)
+            Utils::Iterator<T> end(void)
             {
-                return _data + _size;
+                return Utils::Iterator<T>{ _data + _size };
             }
 
-            const T* begin(void) const
+            Utils::ConstIterator<T> begin(void) const
             {
-                return _data;
+                return Utils::ConstIterator<T>{ _data };
             }
 
-            const T* end(void) const
+            Utils::ConstIterator<T> end(void) const
             {
-                return _data + _size;
+                return Utils::ConstIterator<T>{ _data + _size };
             }
 
-            const T* cbegin(void) const
+            Utils::ConstIterator<T> cbegin(void) const
             {
-                return _data;
+                return begin();
             }
 
-            const T* cend(void) const
+            Utils::ConstIterator<T> cend(void) const
             {
-                return _data + _size;
+                return end();
             }
 
 
@@ -420,35 +451,6 @@ namespace DuinoCollections
                 auto count = _INDEXING_POLICY.remove_all(_data, _size, item);
                 _size -= count;
                 return count > 0;
-            }
-
-            /**
-             * @return the current number of elements accessible in this
-             *         LinearCollection.
-             */
-            [[nodiscard]]
-            size_t size(void) const
-            {
-                return _size;
-            }
-
-            /**
-             * @return true if this LinearCollection has reached its max capacity,
-             *         false otherwise.
-             */
-            [[nodiscard]]
-            bool is_full(void) const
-            {
-                return _size >= _capacity;
-            }
-
-            /**
-             * @return true if this LinearCollection contains no element, false otherwise.
-             */
-            [[nodiscard]]
-            bool is_empty(void) const
-            {
-                return _size == 0;
             }
 
         private:
