@@ -217,6 +217,30 @@ single allocation at construction only.
 #include <FixedVector.hpp>
 ```
 
+## Memory footprint
+
+Memory usage is deterministic and depends only on:
+- Element size.
+- Container capacity.
+- Small internal metadata (indexes, size counters).
+
+Typical memory usage examples:
+
+| Container | Example | Approx. memory (AVR) |
+|---|---|---|
+| `FixedVector<int>` | capacity = 10 | ~20 bytes |
+| `FixedVector<float>` | capacity = 10 | ~40 bytes |
+| `FixedSet<uint16_t>` | capacity = 16 | ~32 bytes |
+| `FixedRingBuffer<byte>` | capacity = 64 | ~64 bytes |
+| `FixedMap<uint8_t, uint16_t>` | capacity = 8 | ~24 bytes |
+
+Notes:
+- AVR sizes: `int = 2 bytes`, `float = 4 bytes`.
+- `FixedMap<K,V>` stores key and value together (`sizeof(K) + sizeof(V)`).
+- A small control overhead is added (pointer, size, capacity), typically **6–8 
+**bytes** on AVR.
+
+
 ## Limitations
 **DuinoCollections** is designed for small microcontrollers and predictable
 memory usage. This design implies a number of intentional limitations:
