@@ -13,7 +13,7 @@ License: MIT
 ## Quick example
 ```C++
 #include <DuinoCollections.hpp>
-using namespace DuinoCollections;
+using namespace **DuinoCollections**;
 
 FixedVector<int> values(5);
 
@@ -27,9 +27,9 @@ for (int v : values)
 }
 ```
 
-## Why DuinoCollections?
+## Why **DuinoCollections**?
 
-Arduino gives you arrays. DuinoCollections gives you containers.
+Arduino gives you arrays. **DuinoCollections** gives you containers.
 
 ### With raw arrays
 Manual size tracking, index errors, boilerplate shifting... and code that gets 
@@ -52,7 +52,7 @@ for (size_t i = 0; i < size; i++) {
 }
 ```
 
-### With DuinoCollections
+### With **DuinoCollections**
 
 Same job, but with:
 - Fixed capacity (no resizing).
@@ -97,7 +97,7 @@ Feel free to take a look at the [cheat-sheet](CHEATSHEET.md).
 
 ## When should I use DuinoCollections?
 
-Use DuinoCollections when you would normally use a raw array, but need something 
+Use **DuinoCollections** when you would normally use a raw array, but need something 
 safer and easier to manage.
 
 It’s a good fit when:
@@ -112,13 +112,13 @@ Typical use cases:
 - Fixed-size history or rolling windows.
 - Lookup tables or small in-memory datasets.
 
-If your data structure must grow dynamically at runtime, DuinoCollections is not 
+If your data structure must grow dynamically at runtime, **DuinoCollections** is not 
 the right tool — and on most Arduino targets, dynamic resizing is usually a bad 
 idea anyway.
 
 
 ## Design goals
-DuinoCollections is built with embedded constraints in mind:
+**DuinoCollections** is built with embedded constraints in mind:
 - Deterministic memory: single allocation at construction. No resizing, no 
 fragmentation over time.
 - Fixed capacity by design: define the maximum size once, behavior stays 
@@ -135,7 +135,7 @@ Predictable behavior first. Convenience second.
 
 ## Non-goals
 
-DuinoCollections is not meant to replace the full C++ STL.
+**DuinoCollections** is not meant to replace the full C++ STL.
 - No dynamic resizing: Containers never grow automatically.
 - No general-purpose desktop usage: This library is optimized for embedded 
 systems, not for PCs or large-memory environments.
@@ -146,14 +146,14 @@ during normal operation.
 - Not for highly dynamic workloads: If your application constantly changes 
 container sizes, a dynamically resizing structure may be more appropriate.
 
-DuinoCollections is designed to bring pragmatic convenience to embedded 
+**DuinoCollections** is designed to bring pragmatic convenience to embedded 
 development — not STL completeness.
 
 ## Installation
 
 ### Arduino IDE
 
-Clone the following [git repo](https://github.com/Pierrolefou881/DuinoCollections.git) 
+Clone the following [git repo](https://github.com/Pierrolefou881/**DuinoCollections**.git) 
 directly into your Arduino/libraries directory. 
 
 ### PlatformIO
@@ -163,18 +163,18 @@ Add the library to your project's **platformio.ini** file:
 <!-- #### Stable
 ```ini
 lib_deps =
-    https://github.com/Pierrolefou881/DuinoCollections.git#v1.0.0
+    https://github.com/Pierrolefou881/**DuinoCollections**.git#v1.0.0
 ``` -->
 
 #### Development
 ```ini
 lib_deps =
-    https://github.com/Pierrolefou881/DuinoCollections.git#main
+    https://github.com/Pierrolefou881/**DuinoCollections**.git#main
 ```
 
 ## Structure
 
-DuinoCollections is a small framework of generic, fixed-capacity containers.
+**DuinoCollections** is a small framework of generic, fixed-capacity containers.
 
 Because most supported MCUs have limited memory, containers avoid unbounded 
 dynamic allocation and heap fragmentation. All collections are array-backed and 
@@ -192,13 +192,14 @@ concrete type.
 ## Available containers
 
 ### Core containers
-- **FixedVector** — variable size with fixed capacity (general-purpose container).
-- **FixedRingBuffer** — circular FIFO buffer for streaming data.
-- **FixedMap** — fixed-capacity key/value container, sorted by key.
+- `FixedVector` — variable size with fixed capacity (general-purpose container).
+- `FixedRingBuffer` — circular FIFO buffer for streaming data.
+- `FixedMap` — fixed-capacity key/value container, sorted by key.
 
 ### Utility containers
-- **FixedSet** — unique elements only, sorted.
-- **FixedOrderedVector** — automatically sorted vector.
+- `FixedSet` — unique elements only.
+- `FixedOrderedVector` — automatically sorted vector.
+- `FixedOrderedSet` — automatically sorted set.
 
 
 All containers share a consistent API, deterministic memory usage, and perform a 
@@ -208,14 +209,124 @@ single allocation at construction only.
 ## Basic usage
 
 ### Importing collections
+
+To minimize code footprint, each container header can be imported
+independently.
+
 ```C++
 // example.ino
 
-#include <DuinoCollections.hpp>      // Import the entire framework (not recommended).
+// Import the entire framework (not recommended).
+#include <DuinoCollections.hpp>
 
 // Or import each collection separately according to your needs.
 #include <FixedVector.hpp>
+#include <FixedOrderedSet.hpp>
 ```
+
+### Instantiating
+Containers from **DuinoCollections** need their template parameters and a maximum
+capacity at construction. For non-sorted collections like `FixedVector` and
+`FixedSet`, the template parameter is only the type of contained objects.
+```C++
+#include  <FixedVector.hpp>
+
+// Initializes a default capacity (5) FixedVector.
+DuinoCollections::FixedVector<Foo> def{ };
+
+// Initializes a FixedVector that can contain 10 Foo at most.
+DuinoCollections::FixedVector<Foo> vec{ 10 };
+```
+Sorted collections like `FixedOrderedVector` and `FixedOrderedSet`
+require an additional template parameter: the sorting order. By default, this
+parameter is set at `Ascending`.
+```C++
+// Initializes a FixedOrderedVector with an ascending sorting order.
+DuinoCollections::FixedOrderedVector ord_vec<int>{ 15 };
+// Same as
+DuinoCollections::FixedOrderedVector ord_vec2<int, 
+    DuinoCollections::Ascending<int>>{ 15 };
+
+// Initializes a FixedOrderedSet with a descending sorting order.
+DuinoCollections::FixedOrderedSet<float, 
+    DuinoCollections::Descending<float>> ord_set{ 12 };
+```
+
+
+
+### FixedVector
+`FixedVector` is a sequential, non-sorted container that allows duplicates.
+It is the most versatile collection of **DuinoCollections** and offers the
+richest interface.
+
+#### Inserting new elements
+`FixedVector` offers two ways of adding elements:
+
+##### `push()`
+Appends the provided element at the end of the collection and returns success 
+status. `push()` may fail if the `FixedVector` is full and can no longer take
+new elements. 
+- Parameter `item` of type `const T&`, with `T` type of element contained in the 
+collection: the item to push
+- Returns `bool`: `true` if insertion successful, `false` otherwise.
+
+##### `insert_at()`
+Inserts the provided element at the specified index and returns a success status.
+Insertion may fail if index is out of bounds or if the `FixedVector` can no
+longer accept new elements.
+- Parameter `item` of type `const T&`, with `T` type of element contained in the
+collection: the item to insert.
+- Parameer `index` of type `size_t`: the desired index of insertion.
+- Returns `bool`: `true` if insertion successful, `false otherwise`.
+
+```C++
+FixedVector<Foo> vec{ 4 };
+
+vec.push(foo1);
+vec.push(foo2);
+vec.push(foo1);   // Duplicates are allowed.
+vec.insert_at(foo3, 1);
+// vec == [foo1, foo3, foo2, foo1]
+
+// Do not hesitate to check insertion status to avoid unpredictable behaviors.
+if (!vec.push(foo4))
+{
+  Serial.println("Collection is full");
+}
+
+if (!vec.insert_at(foo4, 5))
+{
+  Serial.println("Collection is full or index is out of bounds");
+  // Here, both statements are true.
+}
+```
+#### Accessing elements
+#### Removing elements
+
+#### Stack behavior
+FixedVector offers LIFO stack semantics and behavior:
+- `push(const T& item)` Adds item at the top of the stack (end of colleciton).
+- `pop(T& out_value)` Fetches and removes the last item that was pushed.
+
+```C++
+vec.push(foo1);
+vec.push(foo2);
+vec.push(foo1);   // Duplicates are allowed in FixedVector
+vec.push(foo4);
+
+Serial.println(vec.size());   // 4
+
+Foo fetched{ };
+vec.pop(fetched);   // fetched == foo4
+
+Serial.println(vec.size());   // 3
+```
+
+### FixedRingBuffer
+### FixedMap
+### FixedSet
+### FixedOrderedSet
+### FixedOrderedVector
 
 ## Memory footprint
 
@@ -243,7 +354,7 @@ Notes:
 If you know the capacity, you know the exact RAM cost.
 
 ## Limitations
-**DuinoCollections** is designed for small microcontrollers and predictable
+****DuinoCollections**** is designed for small microcontrollers and predictable
 memory usage. This design implies a number of intentional limitations:
 
 - **Fixed capacity**  
@@ -269,7 +380,7 @@ memory usage. This design implies a number of intentional limitations:
 - **No thread safety**  
   Containers are not safe for concurrent access without external synchronization.
 
-DuinoCollections is designed to bring pragmatic convenience to embedded
+**DuinoCollections** is designed to bring pragmatic convenience to embedded
 development, not to be a full STL replacement.
 
 ## License

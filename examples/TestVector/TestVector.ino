@@ -23,6 +23,7 @@
 // Perform these tests in sequence (comment all except one).
 // #define _PUSH_POP
 #define _INSERT_REMOVE_CLEAR
+// #define _ASSIGN_VIA_INDEX
 
 // Test iteration
 #define _RANGE_FOR
@@ -91,6 +92,16 @@ void loop() {
     index = 0;
   }
   print_vector();
+#elif defined(_ASSIGN_VIA_INDEX)
+  vec.push('a' + index);
+  vec[index] = 'Z';
+  print_vector();
+  index++;
+  if (index >= 10)
+  {
+    index = 0;
+    vec.clear();
+  }
   
 #endif
   led_status ^= HIGH;
@@ -101,8 +112,11 @@ void loop() {
 void print_vector()
 {
 #ifdef _RANGE_FOR
-  for (const auto& item : vec)
+  for (auto& item : vec)
   {
+  #ifdef _ASSIGN_VIA_INDEX
+  item = 'Z';
+  #endif
     Serial.print(item);
     Serial.print(", ");
   }

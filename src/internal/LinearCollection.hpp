@@ -137,18 +137,6 @@ namespace DuinoCollections
              * @param index of the item to access.
              * @return the reference to the item at index.
              */
-            T& at(size_t index)
-            {
-                return _data[index];
-            }
-
-            /**
-             * Access the element at the given index.
-             * CAUTION: Undefined behavior if out of bounds. Always ensure
-             * index <  size().
-             * @param index of the item to access.
-             * @return the reference to the item at index.
-             */
             const T& at(size_t index) const
             {
                 return _data[index];
@@ -180,15 +168,6 @@ namespace DuinoCollections
              * CAUTION: Undefined behavior if out of bounds. Always ensure
              * index <  size().
              */
-            T& operator [](size_t index)
-            {
-                return _data[index];
-            }
-
-            /**
-             * CAUTION: Undefined behavior if out of bounds. Always ensure
-             * index <  size().
-             */
             const T& operator [](size_t index) const
             {
                 return _data[index];
@@ -210,16 +189,6 @@ namespace DuinoCollections
             }
 
             // Iterators (range-for support)
-            Utils::Iterator<T> begin(void)
-            {
-                return Utils::Iterator<T> { _data };
-            }
-
-            Utils::Iterator<T> end(void)
-            {
-                return Utils::Iterator<T>{ _data + _size };
-            }
-
             Utils::ConstIterator<T> begin(void) const
             {
                 return Utils::ConstIterator<T>{ _data };
@@ -455,6 +424,16 @@ namespace DuinoCollections
                 auto count = _INDEXING_POLICY.remove_all(_data, _size, item);
                 _size -= count;
                 return count > 0;
+            }
+
+            /**
+             * @return the data array for specific data access.
+             * CAUTION: This is very permissive, ensure _data never
+             * gets exposed directly to the public API.
+             */
+            T* data(void) const
+            {
+                return _data;
             }
 
         private:

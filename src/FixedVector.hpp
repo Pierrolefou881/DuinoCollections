@@ -21,7 +21,7 @@
 #pragma once
 #include "internal/LinearCollection.hpp"
 #include "internal/policy/indexing/SequentialIndexingPolicy.hpp"
-#include "internal/policy/duplication/AllowDuplicationPolicy.hpp"
+#include "internal/policy/duplication/DuplicationPolicy.hpp"
 
 namespace DuinoCollections
 {
@@ -213,6 +213,38 @@ namespace DuinoCollections
         bool remove_all(const T& item)
         {
             return Base::remove_all(item);
+        }
+
+        /**
+         * Access a mutable reference to the element at the specified index.
+         * CAUTION: Undefined behavior if out of bounds. Always ensure
+         * index <  size().
+         * @param index must be within bounds.
+         * @return non-const reference to the element at index.
+         */
+        T& at(size_t index)
+        {
+            return Base::data()[index];
+        }
+
+        /**
+         * CAUTION: Undefined behavior if out of bounds. Always ensure
+         * index <  size().
+         */
+        T& operator [](size_t index)
+        {
+            return at(index);
+        }
+
+        // Iterator for mutable range for
+        Utils::Iterator<T> begin(void)
+        {
+            return Utils::Iterator<T>{ Base::data() };
+        }
+
+        Utils::Iterator<T> end(void)
+        {
+            return Utils::Iterator<T>{ Base::data() + Base::size() };
         }
     };
 }

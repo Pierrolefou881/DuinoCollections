@@ -50,6 +50,16 @@ namespace DuinoCollections
             namespace Indexing
             {
                 /**
+                 * Search result for the find_insert_position
+                 * method of OrderedIndexingPolicy.
+                 */
+                struct SearchResult
+                {
+                    size_t index;
+                    bool found;
+                };
+                
+                /**
                  * Base behavior for indexing policies that require left or
                  * right shifting for data arrangement. This policy is
                  * used by vectors and sets.

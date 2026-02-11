@@ -24,6 +24,7 @@
  *    void remove(T* data, size_t size, size_t index) const
  *    size_t find_index(const T* data, size_t size, const T& item) const
  *    size_t remove_all(T* data, size_t size, const T& item) const
+ *    SearchResult find_insert_position(const T* data, size_t size, const T& item) const
  * 
  *    where T is the template type of items contained in the collection,
  *    data is the data array from the LinearCollection (visitor pattern),
@@ -115,6 +116,19 @@ namespace DuinoCollections
                         }
 
                         return size - write;    // Number of occurrences removed.
+                    }
+
+                    /** 
+                     * Determines whether an item can be inserted and where insertion should occur.
+                     * For SequentialIndexingPolicy, always true, always at the last element.
+                     * @param data array of the owning collection.
+                     * @param size of the owning collection.
+                     * @param item to insert.
+                     * @return { true, size }
+                     */
+                    SearchResult find_insert_position(const T* data, size_t size, const T& item) const
+                    {
+                        return { get_push_index(data, size, item), true };
                     }
 
                     // Forbid dynamic allocation

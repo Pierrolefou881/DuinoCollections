@@ -65,8 +65,12 @@ void loop() {
 
 void print_set()
 {
-  for (const auto& item : set)
+  for (auto& item : set)
   {
+    // Uncomment to check assignment. item should be const
+    // and the following line should not compile.
+    // item = 'Z';
+    
     Serial.print(item);
     Serial.print(", ");
   }

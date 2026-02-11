@@ -24,6 +24,7 @@
  *    void remove(T* data, size_t size, size_t index) const
  *    size_t find_index(const T* data, size_t size, const T& item) const
  *    size_t remove_all(T* data, size_t size, const T& item) const
+ *    SearchResult find_insert_position(const T* data, size_t size, const T& item) const
  * 
  *    where T is the template type of items contained in the collection,
  *    data is the data array from the LinearCollection (visitor pattern),
@@ -49,16 +50,6 @@ namespace DuinoCollections
         {
             namespace Indexing
             {
-                /**
-                 * Search result for the find_insert_position
-                 * method of OrderedIndexingPolicy.
-                 */
-                struct SearchResult
-                {
-                    size_t index;
-                    bool found;
-                };
-
                 /**
                  * Defines sequential, unordered indexing policy.
                  * @param T type contained in the owning collection. Must
@@ -181,6 +172,7 @@ namespace DuinoCollections
                      * @param data array of the owning collection.
                      * @param size of the owning collection.
                      * @param item to insert.
+                     * @return possibility to add and insertion index.
                      */
                     SearchResult find_insert_position(const T* data, size_t size, const T& item) const
                     {
