@@ -19,6 +19,7 @@
  ******************************************************************************
  */
 #include <FixedOrderedSet.hpp>
+#include <FixedSet.hpp>
 
 #define _DESCENDING
 
@@ -34,6 +35,9 @@ DuinoCollections::FixedOrderedSet<char, DuinoCollections::Descending<char>> set 
 #else
 DuinoCollections::FixedOrderedSet<char> set{ MAX_CAPACITY };
 #endif
+
+// Check compilation. FixedOrderedSet already tests all functionalities of FixedSet.
+DuinoCollections::FixedSet<int> unordered{ };
 
 void setup() {
   Serial.begin(9600);

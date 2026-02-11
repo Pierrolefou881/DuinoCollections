@@ -38,12 +38,12 @@ namespace DuinoCollections
         Internal::Policy::Duplication::DuplicationPolicy::ALLOW_DUPLICATES
     > 
     {
-    public:
         using Base = Internal::LinearCollection<
-            T, Internal::Policy::Indexing::SequentialIndexingPolicy<T>,
-            Internal::Policy::Duplication::DuplicationPolicy::ALLOW_DUPLICATES
+        T, Internal::Policy::Indexing::SequentialIndexingPolicy<T>,
+        Internal::Policy::Duplication::DuplicationPolicy::ALLOW_DUPLICATES
         >;
-
+        
+    public:
         /**
          * Initializes this FixedVector as an empty collection with
          * the provided max capacity. If none is provided, a default
@@ -58,7 +58,7 @@ namespace DuinoCollections
         /**
          * Adds the provided item to this FixedVector. Gives feedback
          * upon success or failure.
-         * Success depends on size and capacity or duplication policies.
+         * Success depends on size and capacity.
          * @param item to add to this FixedVector.
          * @return true if push was successful, false otherwise.
          */
@@ -141,19 +141,6 @@ namespace DuinoCollections
         }
 
         /**
-         * Removes the item at provided index from this FixedVector,
-         * if possible. Removal may fail if this FixedVector is empty
-         * or if index is out of bounds (exceeds or equals _size).
-         * @param index where removal should occur.
-         * @param out_item retrieved value, if any (out parameter).
-         * @return true if removal successful, false otherwise.
-         */
-        bool remove_at(size_t index, T& out_item)
-        {
-            return Base::remove_at(index, out_item);
-        }
-
-        /**
          * Removes the first occurrence of the provided item from this
          * FixedVector. Removal may fail if item not present.
          * @param item to remove.
@@ -162,6 +149,17 @@ namespace DuinoCollections
         bool remove_first(const T& item)
         {
             return Base::remove_first(item);
+        }
+
+        /**
+         * Removes all instances of the provided item from this FixedVector.
+         * Successful if at least one instance is removed.
+         * @param item to purge out of this FixedVector.
+         * @return true if removal successful, false otherwise.
+         */
+        bool remove_all(const T& item)
+        {
+            return Base::remove_all(item);
         }
 
         /**
@@ -202,17 +200,6 @@ namespace DuinoCollections
         const T& back(void) const
         {
             return Base::at(Base::size() - 1);
-        }
-
-        /**
-         * Removes all instances of the provided item from this FixedVector.
-         * Successful if at least one instance is removed.
-         * @param item to purge out of this FixedVector.
-         * @return true if removal successful, false otherwise.
-         */
-        bool remove_all(const T& item)
-        {
-            return Base::remove_all(item);
         }
 
         /**

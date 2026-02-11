@@ -19,6 +19,7 @@
  ******************************************************************************
  */
 #include <FixedVector.hpp>
+#include <FixedOrderedVector.hpp>
 
 // Perform these tests in sequence (comment all except one).
 // #define _PUSH_POP
@@ -30,6 +31,11 @@
 
 const size_t MAX_CAPACITY{ 26 };
 DuinoCollections::FixedVector<char> vec{ MAX_CAPACITY };
+
+// Just test initialization, sorting and unicity are tested in TestOrderedSet.ino.
+DuinoCollections::FixedOrderedVector<int> ordered{ };
+DuinoCollections::FixedOrderedVector<int, DuinoCollections::Descending<int>> ordered_desc{ };
+
 size_t index{ };
 bool is_pushing{ true };
 int led_status{ };

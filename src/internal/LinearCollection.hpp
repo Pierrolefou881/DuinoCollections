@@ -83,6 +83,27 @@ namespace DuinoCollections
             }
 
             /**
+             * Removes the item at provided index from this LinearCollection,
+             * if possible. Removal may fail if this LinearCollection is empty
+             * or if index is out of bounds (exceeds or equals _size).
+             * @param index where removal should occur.
+             * @param out_item retrieved value, if any (out parameter).
+             * @return true if removal successful, false otherwise.
+             */
+            bool remove_at(size_t index, T& out_item)
+            {
+                if (!is_valid() || is_empty() || index >= _size)
+                {
+                    return false;
+                }
+                
+                out_item = _data[index];
+                _INDEXING_POLICY.remove(_data, _size, index);
+                _size--;
+                return true;
+            }
+
+            /**
              * @return true if _data member is usable, false otherwise.
              */
             [[nodiscard]]
@@ -368,27 +389,6 @@ namespace DuinoCollections
 
                 _INDEXING_POLICY.insert(_data, _size, index, item);
                 _size++;
-                return true;
-            }
-
-            /**
-             * Removes the item at provided index from this LinearCollection,
-             * if possible. Removal may fail if this LinearCollection is empty
-             * or if index is out of bounds (exceeds or equals _size).
-             * @param index where removal should occur.
-             * @param out_item retrieved value, if any (out parameter).
-             * @return true if removal successful, false otherwise.
-             */
-            bool remove_at(size_t index, T& out_item)
-            {
-                if (!is_valid() || is_empty() || index >= _size)
-                {
-                    return false;
-                }
-                
-                out_item = _data[index];
-                _INDEXING_POLICY.remove(_data, _size, index);
-                _size--;
                 return true;
             }
 
