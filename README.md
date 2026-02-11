@@ -13,7 +13,7 @@ License: MIT
 ## Quick example
 ```C++
 #include <DuinoCollections.hpp>
-using namespace **DuinoCollections**;
+using namespace DuinoCollections;
 
 FixedVector<int> values(5);
 
@@ -52,7 +52,7 @@ for (size_t i = 0; i < size; i++) {
 }
 ```
 
-### With **DuinoCollections**
+### With DuinoCollections
 
 Same job, but with:
 - Fixed capacity (no resizing).
@@ -153,7 +153,7 @@ development — not STL completeness.
 
 ### Arduino IDE
 
-Clone the following [git repo](https://github.com/Pierrolefou881/**DuinoCollections**.git) 
+Clone the following [git repo](https://github.com/Pierrolefou881/DuinoCollections.git) 
 directly into your Arduino/libraries directory. 
 
 ### PlatformIO
@@ -163,13 +163,13 @@ Add the library to your project's **platformio.ini** file:
 <!-- #### Stable
 ```ini
 lib_deps =
-    https://github.com/Pierrolefou881/**DuinoCollections**.git#v1.0.0
+    https://github.com/Pierrolefou881/DuinoCollections.git#v1.0.0
 ``` -->
 
 #### Development
 ```ini
 lib_deps =
-    https://github.com/Pierrolefou881/**DuinoCollections**.git#main
+    https://github.com/Pierrolefou881/DuinoCollections.git#main
 ```
 
 ## Structure
@@ -276,7 +276,7 @@ Insertion may fail if index is out of bounds or if the `FixedVector` can no
 longer accept new elements.
 - Parameter `item` of type `const T&`, with `T` type of element contained in the
 collection: the item to insert.
-- Parameer `index` of type `size_t`: the desired index of insertion.
+- Parameter `index` of type `size_t`: the desired index of insertion.
 - Returns `bool`: `true` if insertion successful, `false otherwise`.
 
 ```C++
@@ -354,7 +354,7 @@ Notes:
 If you know the capacity, you know the exact RAM cost.
 
 ## Limitations
-****DuinoCollections**** is designed for small microcontrollers and predictable
+**DuinoCollections** is designed for small microcontrollers and predictable
 memory usage. This design implies a number of intentional limitations:
 
 - **Fixed capacity**  

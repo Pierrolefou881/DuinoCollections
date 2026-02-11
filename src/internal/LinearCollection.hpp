@@ -42,7 +42,7 @@ namespace DuinoCollections
          *     <li>Return feedback on critical operations (push, pop, insert, remove...).</li>
          * </ul>
          * 
-         * LinarCollection should be considered as an abstract type and not instanced
+         * LinearCollection should be considered as an abstract type and not instanced
          * directly.
          * LinearCollection defines the common interface and enforces invariants. Derived
          * collection types provide façade and pick the methods that suit their needs.
@@ -179,13 +179,20 @@ namespace DuinoCollections
             LinearCollection<T, IndexingPolicy, Duplication>& operator =(
                 LinearCollection<T, IndexingPolicy, Duplication>&& other) noexcept
             {
-                _data = other._data;
-                _capacity = other._capacity;
-                _size = other._size;
+                if (this != &other)
+                {
+                    delete[] _data;
 
-                other._data = nullptr;
-                other._capacity = 0;
-                other._size = 0;
+                    _data = other._data;
+                    _capacity = other._capacity;
+                    _size = other._size;
+
+                    other._data = nullptr;
+                    other._capacity = 0;
+                    other._size = 0;
+                }
+
+                return *this;
             }
 
             // Iterators (range-for support)
