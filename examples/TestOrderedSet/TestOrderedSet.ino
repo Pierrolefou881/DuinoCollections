@@ -44,7 +44,6 @@ void setup() {
 }
 
 void loop() {
-  
   if (index < size)
   {
     if (is_removing && !set.erase(to_remove[index]))
@@ -67,8 +66,7 @@ void loop() {
   delay(1000);
 }
 
-void print_set()
-{
+void print_set() {
   for (auto& item : set)
   {
     // Uncomment to check assignment. item should be const

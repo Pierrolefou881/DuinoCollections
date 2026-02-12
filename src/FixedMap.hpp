@@ -37,7 +37,7 @@ namespace DuinoCollections
     template<typename K, typename V>
     struct KeyValue
     {
-        const K key{ };
+        K key{ };
         V value{ };
 
         /**
@@ -51,7 +51,7 @@ namespace DuinoCollections
          * @param a_key must be unique.
          * @param a_value can be any value of its type.
          */
-        KeyValue(const K& a_key, const V& a_value)
+        explicit KeyValue(const K& a_key, const V& a_value)
             : key{ a_key }, value{ a_value}
         {
             // Empty body.
@@ -110,5 +110,62 @@ namespace DuinoCollections
         >;
     
     public:
+        /**
+         * Initializes this FixedMap with the provided maximum capacity.
+         * If no capacity if provided, it shall be defaulted to 5.
+         * @param max_capacity maximum number of KeyValues this FixedMap can
+         *        contain. Defaulted to 5.
+         */
+        FixedMap(size_t max_capacity = 5) : Base{ max_capacity }
+        {
+            // Empty body.
+        }
+
+        /**
+         * Adds the provided item and indexes it with the provided key.
+         * Add may fail if this FixedMap is already at full capacity
+         * (size == max capacity) or if key already in use.
+         * @param key must be unique, i.e. not already in use.
+         * @param value can be any value supported by the type V.
+         * @return true if add was successful, false otherwise.
+         */
+        bool add(const K& key, const V& value)
+        {
+            return Base::push(KeyValue<K, V>{ key, value });
+        }
+
+        /**
+         * Removes the item indexed a the provided index from this FixedMap and
+         * frees index. Removal may fail if this FixedMap has no element (i.e. is empty)
+         * or if key is not used.
+         * @param key indexing the item to remove.
+         * @param out_val value removed, if found; default otherwise (out parameter).
+         * @return true if removal was successful, false otherwise.
+         */
+        bool remove(const K& key, V& out_val)
+        {
+            KeyValue<K, V> keyval{ key, V{ }};
+            auto found = Base::remove_first(keyval, keyval);
+            out_val = keyval.value;
+            return found;
+        }
+
+        /**
+         * Fetches the value at the provided index without removing it from this
+         * FixedMap.
+         * @param key indexing the item to find.
+         * @param out_val item, if found (out parameter).
+         * @return true if item found, false otherwise.
+         */
+        bool try_get(const K& key, V& out_val)
+        {
+            auto index = Base::find(KeyValue<K, V>{ key, V{ } });
+            bool is_found = index != Base::size();
+            if (is_found)
+            {
+                out_val = Base::data()[index].value;
+            }
+            return is_found;
+        }
     };
 }

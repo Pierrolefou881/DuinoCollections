@@ -115,8 +115,7 @@ void loop() {
   delay(500);
 }
 
-void print_vector()
-{
+void print_vector() {
 #ifdef _RANGE_FOR
   for (auto& item : vec)
   {
