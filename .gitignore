@@ -1,1 +1,2 @@
-*.json
+# Do not push vs code config files !
+.vscode/

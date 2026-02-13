@@ -1,3 +1,9 @@
+<!--
+DuinoCollections
+Copyright (c) 2026 Pierre Debas
+SPDX-License-Identifier: MIT
+-->
+
 # DuinoCollections
 
 Still fighting raw arrays on Arduino?

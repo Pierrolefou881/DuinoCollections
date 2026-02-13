@@ -1,3 +1,9 @@
+<!--
+DuinoCollections
+Copyright (c) 2026 Pierre Debas
+SPDX-License-Identifier: MIT
+-->
+
 # Cheat sheet
 
 ## TL;DR – Which container should I use?
