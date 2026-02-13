@@ -169,7 +169,7 @@ namespace DuinoCollections
          */
         T& front(void)
         {
-            return Base::at(0);
+            return Base::data()[0];
         }
 
         /**
@@ -189,7 +189,7 @@ namespace DuinoCollections
          */
         T& back(void)
         {
-            return Base::at(Base::size() - 1);
+            return Base::data()[Base::size() - 1];
         }
 
         /**

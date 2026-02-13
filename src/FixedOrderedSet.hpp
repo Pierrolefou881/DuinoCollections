@@ -76,7 +76,7 @@ namespace DuinoCollections
          * Removal may fail if this FixedOrderedSet has no element to
          * remove (i.e. is empty) or the item is not present.
          * @param item to remove.
-         * @return true 
+         * @return true if item successfully erased, false otherwise.
          */
         bool erase(const T& item)
         {

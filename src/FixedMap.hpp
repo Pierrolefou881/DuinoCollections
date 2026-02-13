@@ -145,9 +145,15 @@ namespace DuinoCollections
         bool remove(const K& key, V& out_val)
         {
             KeyValue<K, V> keyval{ key, V{ }};
-            auto found = Base::remove_first(keyval, keyval);
+            auto index = Base::find(keyval);
+            if (index == Base::size())
+            {
+                return false;
+            }
+
+            Base::remove_at(index, keyval);
             out_val = keyval.value;
-            return found;
+            return true;
         }
 
         /**

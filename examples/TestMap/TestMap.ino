@@ -34,8 +34,18 @@ void setup() {
 void loop() {
     if (the_map.is_full())
     {
+      float removed{ };
+      if (the_map.remove(keys[0], removed))
+      {
+        Serial.print(removed);
+        Serial.println("\tWAS REMOVED");
+      }
       the_map.clear();
       index = 0;
+      if (!the_map.remove(3, removed))
+      {
+        Serial.println("KEY NOT FOUND OR MAP IS EMPTY");
+      }
     }
     else 
     {
