@@ -26,94 +26,97 @@
 
 namespace DuinoCollections
 {
-    namespace Utils
+    namespace Internal
     {
-        /**
-         * Enables iteration over collections without exposing the
-         * raw data pointer to the public API.
-         * @param T type of data contained in the calling collection.
-         */
-        template<typename T>
-        class Iterator
+        namespace Utils
         {
-        public:
             /**
-             * Initializes this Iterator with the provided raw data pointer.
-             * @param ptr data array to iterate over.
+             * Enables iteration over collections without exposing the
+             * raw data pointer to the public API.
+             * @param T type of data contained in the calling collection.
              */
-            explicit Iterator(T* ptr) : _ptr(ptr) 
+            template<typename T>
+            class Iterator
             {
-                // Empty body.
-            }
+            public:
+                /**
+                 * Initializes this Iterator with the provided raw data pointer.
+                 * @param ptr data array to iterate over.
+                 */
+                explicit Iterator(T* ptr) : _ptr(ptr) 
+                {
+                    // Empty body.
+                }
+
+                /**
+                 * @return the item currently iterated over.
+                 */
+                T& operator*() const 
+                { 
+                    return *_ptr; 
+                }
+
+                // move to the next item
+                Iterator& operator++() 
+                { 
+                    _ptr++; 
+                    return *this; 
+                }
+
+                // Useful for checking if iteration has reached end().
+                bool operator!=(const Iterator& other) const 
+                { 
+                    return _ptr != other._ptr; 
+                }
+
+            private:
+                T* _ptr;
+            };
 
             /**
-             * @return the item currently iterated over.
+             * Enables iteration over collections without exposing the
+             * raw data pointer to the public API. This version gives access
+             * to non-mutable data.
+             * @param T type of data contained in the calling collection.
              */
-            T& operator*() const 
-            { 
-                return *_ptr; 
-            }
-
-            // move to the next item
-            Iterator& operator++() 
-            { 
-                _ptr++; 
-                return *this; 
-            }
-
-            // Useful for checking if iteration has reached end().
-            bool operator!=(const Iterator& other) const 
-            { 
-                return _ptr != other._ptr; 
-            }
-
-        private:
-            T* _ptr;
-        };
-
-        /**
-         * Enables iteration over collections without exposing the
-         * raw data pointer to the public API. This version gives access
-         * to non-mutable data.
-         * @param T type of data contained in the calling collection.
-         */
-        template<typename T>
-        class ConstIterator
-        {
-        public:
-            /**
-             * Initializes this Iterator with the provided raw data pointer.
-             * @param ptr data array to iterate over.
-             */
-            explicit ConstIterator(const T* ptr) : _ptr(ptr) 
+            template<typename T>
+            class ConstIterator
             {
-                // Empty body
-            }
+            public:
+                /**
+                 * Initializes this Iterator with the provided raw data pointer.
+                 * @param ptr data array to iterate over.
+                 */
+                explicit ConstIterator(const T* ptr) : _ptr(ptr) 
+                {
+                    // Empty body
+                }
 
-            /**
-             * @return the item currently iterated over.
-             */
-            const T& operator*() const 
-            { 
-                return *_ptr; 
-            }
+                /**
+                 * @return the item currently iterated over.
+                 */
+                const T& operator*() const 
+                { 
+                    return *_ptr; 
+                }
 
-            // Move on to the next item.
-            ConstIterator& operator++() 
-            { 
-                _ptr++; 
-                return *this; 
-            }
+                // Move on to the next item.
+                ConstIterator& operator++() 
+                { 
+                    _ptr++; 
+                    return *this; 
+                }
 
-            // Useful for checking if iteration has reached end().
-            bool operator!=(const ConstIterator& other) const 
-            { 
-                return _ptr != other._ptr; 
-            }
+                // Useful for checking if iteration has reached end().
+                bool operator!=(const ConstIterator& other) const 
+                { 
+                    return _ptr != other._ptr; 
+                }
 
-        private:
-            const T* _ptr;
-        };
+            private:
+                const T* _ptr;
+            };
 
+        }
     }
 }

@@ -13,8 +13,8 @@
  *  SPDX-License-Identifier: MIT
  *
  *  Description:
- *    Fixed-size, array-backed circular buffer implementation for Arduino 
- *    compatible boards. Part of the DuinoCollections library.
+ *    Fixed-size, array-backed circular buffer implementation for 
+ *    Arduino-compatible boards. Part of the DuinoCollections library.
  * 
  ******************************************************************************
  */
@@ -25,12 +25,23 @@
 namespace DuinoCollections
 {
     /**
+     * Determines what to do when pushing on a full FixedRingBuffer:
+     * - Reject -> push fails and return status is false.
+     * - Overwrite -> erase oldest data and always succeed.
+     */
+    enum class RingBufferMode : uint8_t
+    {
+        REJECT,
+        OVERWRITE
+    };
+
+    /**
      * Fixed-capacity circular FIFO buffer. Provides
      * fast and ISR-safe data access.
      * @param T type of objects contained. Must have a default
      *          initializer.
      */
-    template<typename T>
+    template<typename T, RingBufferMode PushMode = RingBufferMode::REJECT>
     class FixedRingBuffer
     {
     public:
@@ -104,9 +115,20 @@ namespace DuinoCollections
          */
         bool push(const T& item)
         {
-            if (!is_valid() || is_full())
+            if (!is_valid())
             {
                 return false;
+            }
+
+            if (is_full())
+            {
+                if (PushMode == RingBufferMode::REJECT)
+                {
+                    return false;
+                }
+
+                _head = next(_head);
+                _size--;
             }
 
             _data[_tail] = item;
@@ -175,8 +197,8 @@ namespace DuinoCollections
         }
 
         /**
-         * Frees all slots in the _data array and marks
-         * this FixedRingBuffer as empty.
+         * Marks the buffer as empty. Stored values remain in memory
+         * until overwritten.
          */
         void clear(void)
         {
@@ -206,7 +228,7 @@ namespace DuinoCollections
          */
         bool push_atomic(const T& item)
         {
-            Utils::ScopedInterruptLock lock{};
+            Internal::Utils::ScopedInterruptLock lock{};
             return push(item);
         }
 
@@ -231,7 +253,7 @@ namespace DuinoCollections
          */
         bool pop_atomic(T& out_value)
         {
-            Utils::ScopedInterruptLock lock{};
+            Internal::Utils::ScopedInterruptLock lock{};
             return pop(out_value);
         }
 
@@ -269,21 +291,37 @@ namespace DuinoCollections
             return at(index);
         }
 
+        /**
+         * CAUTION: Undefined behavior if collection is empty.
+         * @return the first element (mutable) in this RingBuffer
+         */
         T& front(void)
         {
             return _data[_head];
         }
 
+        /**
+         * CAUTION: Undefined behavior if collection is empty.
+         * @return the first element in this RingBuffer
+         */
         const T& front(void) const
         {
             return _data[_head];
         }
 
+        /**
+         * CAUTION: Undefined behavior if collection is empty.
+         * @return the last element (mutable) in this RingBuffer
+         */
         T& back(void)
         {
             return _data[prev(_tail)];
         }
 
+        /**
+         * CAUTION: Undefined behavior if collection is empty.
+         * @return the last element in this RingBuffer
+         */
         const T& back(void) const
         {
             return _data[prev(_tail)];
@@ -324,7 +362,7 @@ namespace DuinoCollections
 
             bool operator!=(const RingBufferIterator& other) const
             {
-                return _index != other._index;
+                return _buffer != other._buffer || _index != other._index;
             }
 
         private:
@@ -339,7 +377,7 @@ namespace DuinoCollections
         {
         public:
             /**
-             * Intializes this ConstRingBufferIterator with the provided pointer
+             * Initializes this ConstRingBufferIterator with the provided pointer
              * to a RingBuffer and its head index.
              * @param buffer must not be null.
              * @param index of the buffer's head.
@@ -363,7 +401,7 @@ namespace DuinoCollections
 
             bool operator!=(const ConstRingBufferIterator& other) const
             {
-                return _index != other._index;
+                return _buffer != other._buffer || _index != other._index;
             }
 
         private:

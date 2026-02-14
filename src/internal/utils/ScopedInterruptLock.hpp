@@ -25,74 +25,77 @@
 
 namespace DuinoCollections
 {
-    namespace Utils
+    namespace Internal
     {
-        /**
-         * @brief RAII helper that disables interrupts on construction
-         *        and restores the previous interrupt state on destruction.
-         *
-         * This class is portable across Arduino-compatible platforms
-         * (AVR, ESP32, RP2040, etc.) because it relies on the core
-         * noInterrupts() / interrupts() API.
-         *
-         * The previous interrupt state is preserved so nested usage is safe.
-         *
-         * @warning Must not be used inside an ISR.
-         */
-        class ScopedInterruptLock final
+        namespace Utils
         {
-        public:
             /**
-             * Initializes this ScopetInterruptLock and deactivates
-             * interrupts for its lifetime.
+             * @brief RAII helper that disables interrupts on construction
+             *        and restores the previous interrupt state on destruction.
+             *
+             * This class is portable across Arduino-compatible platforms
+             * (AVR, ESP32, RP2040, etc.) because it relies on the core
+             * noInterrupts() / interrupts() API.
+             *
+             * The previous interrupt state is preserved so nested usage is safe.
+             *
+             * @warning Must not be used inside an ISR.
              */
-            ScopedInterruptLock()
+            class ScopedInterruptLock final
             {
-                _were_enabled = interruptsEnabled();
-                noInterrupts();
-            }
-
-            ~ScopedInterruptLock()
-            {
-                if (_were_enabled)
+            public:
+                /**
+                 * Initializes this ScopetInterruptLock and deactivates
+                 * interrupts for its lifetime.
+                 */
+                ScopedInterruptLock()
                 {
-                    interrupts();
+                    _were_enabled = interruptsEnabled();
+                    noInterrupts();
                 }
-            }
 
-            // Forbid copy.
-            ScopedInterruptLock(const ScopedInterruptLock&) = delete;
-            ScopedInterruptLock& operator=(const ScopedInterruptLock&) = delete;
+                ~ScopedInterruptLock()
+                {
+                    if (_were_enabled)
+                    {
+                        interrupts();
+                    }
+                }
 
-            // Forbid dynamic allocation
-            void* operator new(size_t) = delete;
-            void* operator new[](size_t) = delete;
-            void operator delete(void*) = delete;
-            void operator delete[](void*) = delete;
+                // Forbid copy.
+                ScopedInterruptLock(const ScopedInterruptLock&) = delete;
+                ScopedInterruptLock& operator=(const ScopedInterruptLock&) = delete;
 
-        private:
-            bool _were_enabled;
+                // Forbid dynamic allocation
+                void* operator new(size_t) = delete;
+                void* operator new[](size_t) = delete;
+                void operator delete(void*) = delete;
+                void operator delete[](void*) = delete;
 
-            /**
-             * Implementation is platform-dependent.
-             * @return true if interrupts are enabled, false otherwise.
-             */
-            static bool interruptsEnabled()
-            {
-            #if defined(ARDUINO_ARCH_AVR)
-                return bitRead(SREG, 7);
+            private:
+                bool _were_enabled;
 
-            #elif defined(ARDUINO_ARCH_ESP32)
-                return true; // ESP32 Arduino core does not expose a direct API
+                /**
+                 * Implementation is platform-dependent.
+                 * @return true if interrupts are enabled, false otherwise.
+                 */
+                static bool interruptsEnabled()
+                {
+                #if defined(ARDUINO_ARCH_AVR)
+                    return bitRead(SREG, 7);
 
-            #elif defined(ARDUINO_ARCH_RP2040)
-                return true; // same limitation
+                #elif defined(ARDUINO_ARCH_ESP32)
+                    return true; // ESP32 Arduino core does not expose a direct API
 
-            #else
-                return true; // fallback
-            #endif
-            }
-        };
+                #elif defined(ARDUINO_ARCH_RP2040)
+                    return true; // same limitation
+
+                #else
+                    return true; // fallback
+                #endif
+                }
+            };
+        }
     }
 }
 

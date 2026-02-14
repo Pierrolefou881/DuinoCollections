@@ -19,6 +19,7 @@ All DuinoCollections containers are:
 | Need                                     | Use                  |
 | ---------------------------------------- | -------------------- |
 | Simple array / stack, duplicates allowed | `FixedVector`        |
+| FIFO / streaming buffer                  | `FixedRingBuffer`    |
 | Unique values, order does not matter     | `FixedSet`           |
 | Always sorted, duplicates allowed        | `FixedOrderedVector` |
 | Always sorted, unique values             | `FixedOrderedSet`    |
@@ -51,6 +52,37 @@ ISR-safe variant:
 ```cpp
 vec.push_atomic(value);
 ```
+
+## FixedRingBuffer
+
+**Use when:**
+
+* You need a FIFO buffer
+* Data comes continuously (streaming)
+* You want constant-time push/pop
+* Perfect for producer/consumer patterns
+* Ideal for ISR ↔ loop communication
+
+```cpp
+FixedRingBuffer<int> buffer(8);
+
+buffer.push(10);
+buffer.push(20);
+
+int value;
+buffer.pop(value);   // value == 10
+```
+
+ISR-safe usage:
+```C++
+buffer.push_atomic(sample);
+buffer.pop_atomic(out);
+```
+### Typical use cases:
+- Serial data buffering
+- Sensor sampling
+- Event queues
+- ISR → main loop communication
 
 ## FixedSet
 

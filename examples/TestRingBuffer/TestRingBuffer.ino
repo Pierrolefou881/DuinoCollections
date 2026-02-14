@@ -20,16 +20,22 @@
  */
 #include <FixedRingBuffer.hpp>
 
-const int CAPACITY{ 6 };
-const char letters[] = { 'F', 'o', 'o', 'B', 'A', 'R', 'R' };
-
-DuinoCollections::FixedRingBuffer<char> buffer{ CAPACITY };
-int index{ };
-bool is_popping{ };
-
+#define _OVERWRITE
 #define _RANGE_FOR
 // #define _MUTABLE
 // #define _CLEAR
+
+const int CAPACITY{ 6 };
+const char letters[] = { 'F', 'o', 'o', 'B', 'A', 'R', 'R', 'd', 'U', 'i', 'N', 'o' };
+
+#ifdef _OVERWRITE
+DuinoCollections::FixedRingBuffer<char, DuinoCollections::RingBufferMode::OVERWRITE> buffer{ CAPACITY };
+#else
+DuinoCollections::FixedRingBuffer<char> buffer{ CAPACITY };
+#endif
+int index{ };
+bool is_popping{ };
+
 
 void setup() {
     Serial.begin(9600);
@@ -47,7 +53,10 @@ void loop() {
         }
         index++;
     }
-#ifdef _CLEAR
+#ifdef _OVERWRITE
+    else
+    {
+#elif defined(_CLEAR)
     else
     {
         buffer.clear();

@@ -22,6 +22,7 @@
 #include "internal/LinearCollection.hpp"
 #include "internal/policy/indexing/SequentialIndexingPolicy.hpp"
 #include "internal/policy/duplication/DuplicationPolicy.hpp"
+#include "internal/utils/Iterator.hpp"
 
 namespace DuinoCollections
 {
@@ -224,14 +225,14 @@ namespace DuinoCollections
         }
 
         // Iterator for mutable range for
-        Utils::Iterator<T> begin(void)
+        Internal::Utils::Iterator<T> begin(void)
         {
-            return Utils::Iterator<T>{ Base::data() };
+            return Internal::Utils::Iterator<T>{ Base::data() };
         }
 
-        Utils::Iterator<T> end(void)
+        Internal::Utils::Iterator<T> end(void)
         {
-            return Utils::Iterator<T>{ Base::data() + Base::size() };
+            return Internal::Utils::Iterator<T>{ Base::data() + Base::size() };
         }
     };
 }
