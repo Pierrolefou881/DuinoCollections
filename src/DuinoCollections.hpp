@@ -20,4 +20,8 @@
  */
 #pragma once
 #include "FixedVector.hpp"
+#include "FixedSet.hpp"
+#include "FixedOrderedVector.hpp"
 #include "FixedOrderedSet.hpp"
+#include "FixedMap.hpp"
+#include "FixedRingBuffer.hpp"

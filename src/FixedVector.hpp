@@ -90,7 +90,7 @@ namespace DuinoCollections
          *
          * @param item Item to add to the collection.
          * @return true if the item was successfully added, false otherwise
-         *         (e.g. collection full, invalid storage, or duplication policy rejection).
+         *         (e.g. collection full or invalid storage).
          *
          * @note This method is portable across Arduino platforms.
          *
