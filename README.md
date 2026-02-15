@@ -6,9 +6,8 @@ SPDX-License-Identifier: MIT
 
 # DuinoCollections
 
-<!-- [![Arduino Library](https://www.ardu-badge.com/badge/DuinoCollections.svg)](https://www.ardu-badge.com/DuinoCollections)
- [![PlatformIO Registry](https://badges.registry.platformio.org/packages/pierrolefou881/library/DuinoCollections.svg)](https://registry.platformio.org/libraries/pierrolefou881/DuinoCollections)  -->
- ![Header Only](https://img.shields.io/badge/header--only-yes-brightgreen) ![License](https://img.shields.io/github/license/Pierrolefou881/DuinoMemory) ![C++](https://img.shields.io/badge/C%2B%2B-11%2F14-blue) ![Embedded Friendly](https://img.shields.io/badge/embedded-friendly-blue)
+[![Arduino Library](https://www.ardu-badge.com/badge/DuinoCollections.svg)](https://www.ardu-badge.com/DuinoCollections)
+ [![PlatformIO Registry](https://badges.registry.platformio.org/packages/pierrolefou881/library/DuinoCollections.svg)](https://registry.platformio.org/libraries/pierrolefou881/DuinoCollections)  ![Header Only](https://img.shields.io/badge/header--only-yes-brightgreen) ![License](https://img.shields.io/github/license/Pierrolefou881/DuinoMemory) ![C++](https://img.shields.io/badge/C%2B%2B-11%2F14-blue) ![Embedded Friendly](https://img.shields.io/badge/embedded-friendly-blue)
 
 Tired of managing raw arrays on Arduino?
 
@@ -191,7 +190,7 @@ Add the library to your project's **platformio.ini** file:
 #### Stable
 ```ini
 lib_deps =
-    https://github.com/Pierrolefou881/DuinoCollections.git#v1.0.0
+    https://github.com/Pierrolefou881/DuinoCollections.git#v1.0.1
 ```
 
 #### Development

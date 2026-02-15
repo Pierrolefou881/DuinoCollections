@@ -1,6 +1,6 @@
 {
   "name": "DuinoCollections",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fixed-capacity, array-backed collections for Arduino (no dynamic allocation, no exceptions).",
   "keywords": [
     "arduino",
